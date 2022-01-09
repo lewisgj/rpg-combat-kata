@@ -33,6 +33,25 @@ describe("Characters", () =>{
         expect(testSubject.isAlive()).toBeTruthy();
     });
 
+    it('should do 50% less damage if target is 5+ levels above attacker', () => {
+        const attacker = new Character();
+        const target = new Character(6);
+
+        attacker.dealDamage(target, DEADLY_DAMAGE);
+        expect(target.isAlive()).toBeTruthy()
+
+        attacker.dealDamage(target, DEADLY_DAMAGE);
+        expect(target.isAlive()).toBeFalsy()
+    })
+
+    it('should do 50% more damage if target is 5+ levels below attacker', () => {
+        const attacker = new Character(6);
+        const target = new Character();
+
+        attacker.dealDamage(target, (DEADLY_DAMAGE / 3)*2); // 2/3rds of deadly + 50% ~= original deadly amount
+        expect(target.isAlive()).toBeFalsy()
+    })
+
     describe('Healing', () => {
         it('should recover health if healed', () => {
             const other = new Character();

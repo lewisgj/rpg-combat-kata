@@ -1,7 +1,24 @@
+function calculateDamageModifier(attackerLevel: number, targetLevel: number): number {
+    const levelAdvantage = attackerLevel - targetLevel;
+    if (levelAdvantage <= -5) {
+        return 0.5;
+    }
+    else if (levelAdvantage >= 5) {
+        return 1.5;
+    }
+
+    return 1;
+}
+
 export class Character {
     static readonly MAX_HEALTH = 1000;
     #health = Character.MAX_HEALTH;
     #isAlive = true;
+    #level: number;
+
+    constructor(level: number = 1) {
+        this.#level = level;
+    }
 
     isAlive(): boolean {
         return this.#isAlive;
@@ -12,7 +29,9 @@ export class Character {
             return;
         }
 
-        other.receiveDamage(damage);
+        const damageModifier = calculateDamageModifier(this.#level, other.#level);
+
+        other.receiveDamage(damage * damageModifier);
     }
 
     receiveDamage(damage: number) {

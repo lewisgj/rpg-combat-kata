@@ -53,3 +53,13 @@ This meant the test I wrote for the wrong requirement could be totally deleted, 
 ### A final refactor
 
 The character tests are getting big! I tried to make it clearer what character we want to assert on by consistently naming them all testSubject.
+
+## Step 2: Level-scaling
+
+### Testing
+
+We finally had a use for level, but no mechanism to level up. I assumed that level was something innate, like how a fire-breathing dragon might be level 100, but a village idiot might be level 1. Testing without directly exposing health was again quite difficult. I settled for using some multipliers of the 'deadly' constant to try to illusrate that it was the difference in levels that made it different to other tests.
+
+### Implementation
+
+To avoid having to refactor everything, I made the assumption that levels were 1 if not specified otherwise.
