@@ -1,3 +1,5 @@
+import {Prop} from "./prop";
+
 function calculateDamageModifier(attackerLevel: number, targetLevel: number): number {
     const levelAdvantage = attackerLevel - targetLevel;
     if (levelAdvantage <= -5) {
@@ -29,6 +31,10 @@ export class Character {
         this.#attack = attack;
     }
 
+    get position(): number {
+        return this.#position;
+    }
+
     isAlive(): boolean {
         return this.#isAlive;
     }
@@ -38,17 +44,22 @@ export class Character {
         return factionsInCommon.length > 0;
     }
 
-    dealDamage(target: Character, damage: number) {
+    dealDamage(target: Character | Prop, damage: number) {
         if (target === this) {
             return;
         }
 
-        if (this.isAlly(target)) {
+        const distance = Math.abs(this.position - target.position);
+        if (distance > MAX_RANGES[this.#attack]) {
             return;
         }
 
-        const distance = Math.abs(this.#position - target.#position);
-        if (distance > MAX_RANGES[this.#attack]) {
+        if (target instanceof Prop) {
+            target.receiveDamage(damage);
+            return;
+        }
+
+        if (this.isAlly(target)) {
             return;
         }
 

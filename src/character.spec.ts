@@ -1,4 +1,5 @@
 import {Attack, Character} from "./character";
+import {Prop} from "./prop";
 
 const DEADLY_DAMAGE = Character.MAX_HEALTH + 1;
 const NON_LETHAL_DAMAGE = 500;
@@ -50,6 +51,15 @@ describe("Characters", () => {
 
         attacker.dealDamage(target, (DEADLY_DAMAGE / 3) * 2); // 2/3rds of deadly + 50% ~= original deadly amount
         expect(target.isAlive()).toBeFalsy()
+    })
+
+    it('can attack props', () => {
+        const tree = new Prop(2000, 0);
+        const character = new Character();
+
+        character.dealDamage(tree, 2001);
+
+        expect(tree.isDestroyed()).toBeTruthy();
     })
 
     describe("in factions", () => {
