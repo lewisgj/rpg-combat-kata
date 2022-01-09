@@ -47,3 +47,9 @@ How? Well, by changing the method signature from `heal(other, amount)` to just `
 
 I abandoned a traditional red/green/refactor here - but the thought process still had great value. I thought: "What's the interface I actually want to use?".
 `receiveHealth` became `heal` and the old `heal` was removed entirely.
+
+This meant the test I wrote for the wrong requirement could be totally deleted, provided I fixed the other tests.
+
+### A final refactor
+
+The character tests are getting big! I tried to make it clearer what character we want to assert on by consistently naming them all testSubject.
