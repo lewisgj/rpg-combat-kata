@@ -58,7 +58,7 @@ The character tests are getting big! I tried to make it clearer what character w
 
 ### Testing
 
-We finally had a use for level, but no mechanism to level up. I assumed that level was something innate, like how a fire-breathing dragon might be level 100, but a village idiot might be level 1. Testing without directly exposing health was again quite difficult. I settled for using some multipliers of the 'deadly' constant to try to illusrate that it was the difference in levels that made it different to other tests.
+We finally had a use for level, but no mechanism to level up. I assumed that level was something innate, like how a fire-breathing dragon might be level 100, but a village idiot might be level 1. Testing without directly exposing health was again quite difficult. I settled for using some multipliers of the 'deadly' constant to try to illustrate that it was the difference in levels that made it different to other tests.
 
 ### Implementation
 
