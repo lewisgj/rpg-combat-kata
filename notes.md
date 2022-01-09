@@ -68,3 +68,41 @@ To avoid having to refactor everything, I made the assumption that levels were 1
 
 The only obvious refactor here was to extract the damage multiplier calculation into its own function. If it got more complicated than that, we might want to unit test it.
 Assuming the requirements stopped here I'd be okay with this solution but dealing damage is taking on a life of its own. I've tried hard so far to avoid violating the tell-don't-ask principle. My gut isn't happy with where the amount of damage is calculated, but I need details of both characters to calculate it. 
+
+# Iteration 3: Attack ranges
+## Where to begin?
+
+In the current system characters exist in a vacuum - the existence of two characters is enough to deal damage. However, in Iteration 3, attacks have a range so characters implicitly have a position.
+
+An example isn't hard to come up with but the implementation is tricky:
+    
+    Given a melee character and a target charaacter 2 meters away 
+    When the character attacks with 'deadly' damage
+    Then the target is dead
+
+We'll start by taking it piece by piece but might need a whole separate red/green/refactor cycle at the end to get to a good place.
+
+## Step 1: Melee fighters
+### Testing
+Let's assume everything's a melee fighter to start (though we'll make it explicit in the code.) While I could make the attack take a distance parameter, it feels like the class (or pair of Characters) should calculate it.
+
+The simplest test I need to force a meaningful change is an 'out of range' example - though I've also added 'in range' examples to be clear what the range cut-off is.
+
+## Implementation
+
+So many choices! To make it explicit, characters take an enum for their "attack type". It felt like the simplest thing I could do while still giving it a name. All the constructor parameters have default values so there's just a few breaking changes which is deliberate. Putting the attack type first means can be confident I'm not setting a level as the position in existing code. We might revisit this constructor later as this class grows.
+Again taking the simplest road, I let the attacking character handle the logic (like I did for level modifiers), while the receiving character decides whether it's dead as a result.
+
+## Refactor
+
+There's nothing obvious yet! I avoided subclassing "MeleeFighter" from "Character": while conceptually it makes sense, I fear that the damage rules are changing a lot so want that defined in a single place.
+
+I was arguably missing some tests for negative distances, so went back and added that to justify to myself why `Math.abs` is required.
+
+## Step 2: Ranged fighters
+
+### Testing
+This looks familiar! I duplicated the tests from melee fighters, rather than expanding on the existing ones to start with. I'm not always a fan of this kind of shortcut but I'd much rather see duplicated or verbose test code provided it's clear what's going on.
+
+## Implementation
+I went for a really naive approach here to make the test pass - just another if statement, duplicating the code. I'll leave the heavy lifting to the refactor step. 

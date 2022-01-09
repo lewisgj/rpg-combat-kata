@@ -2,8 +2,7 @@ function calculateDamageModifier(attackerLevel: number, targetLevel: number): nu
     const levelAdvantage = attackerLevel - targetLevel;
     if (levelAdvantage <= -5) {
         return 0.5;
-    }
-    else if (levelAdvantage >= 5) {
+    } else if (levelAdvantage >= 5) {
         return 1.5;
     }
 
@@ -15,9 +14,13 @@ export class Character {
     #health = Character.MAX_HEALTH;
     #isAlive = true;
     #level: number;
+    #position: number = 0;
+    #attack: Attack;
 
-    constructor(level: number = 1) {
+    constructor(attack: Attack = Attack.Melee, position: number = 0, level: number = 1) {
+        this.#position = position;
         this.#level = level;
+        this.#attack = attack
     }
 
     isAlive(): boolean {
@@ -29,8 +32,19 @@ export class Character {
             return;
         }
 
+        if (this.#attack === Attack.Melee) {
+            const distance = Math.abs(this.#position - other.#position);
+            if (distance > 2) {
+                return;
+            }
+        }
+        else if (this.#attack === Attack.Ranged) {
+            const distance = Math.abs(this.#position - other.#position);
+            if (distance > 20) {
+                return;
+            }
+        }
         const damageModifier = calculateDamageModifier(this.#level, other.#level);
-
         other.receiveDamage(damage * damageModifier);
     }
 
@@ -49,4 +63,9 @@ export class Character {
             this.#health = Character.MAX_HEALTH;
         }
     }
+}
+
+export enum Attack {
+    Melee = 'MELEE',
+    Ranged = 'RANGED'
 }

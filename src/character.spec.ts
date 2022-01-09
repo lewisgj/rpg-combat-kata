@@ -1,8 +1,8 @@
-import {Character} from "./character";
+import {Attack, Character} from "./character";
 
-const DEADLY_DAMAGE = Character.MAX_HEALTH+1;
+const DEADLY_DAMAGE = Character.MAX_HEALTH + 1;
 const NON_LETHAL_DAMAGE = 500;
-describe("Characters", () =>{
+describe("Characters", () => {
     it('should start alive', () => {
         const character = new Character();
 
@@ -35,7 +35,7 @@ describe("Characters", () =>{
 
     it('should do 50% less damage if target is 5+ levels above attacker', () => {
         const attacker = new Character();
-        const target = new Character(6);
+        const target = new Character(Attack.Melee, 0, 6);
 
         attacker.dealDamage(target, DEADLY_DAMAGE);
         expect(target.isAlive()).toBeTruthy()
@@ -45,10 +45,10 @@ describe("Characters", () =>{
     })
 
     it('should do 50% more damage if target is 5+ levels below attacker', () => {
-        const attacker = new Character(6);
+        const attacker = new Character(Attack.Melee, 0, 6);
         const target = new Character();
 
-        attacker.dealDamage(target, (DEADLY_DAMAGE / 3)*2); // 2/3rds of deadly + 50% ~= original deadly amount
+        attacker.dealDamage(target, (DEADLY_DAMAGE / 3) * 2); // 2/3rds of deadly + 50% ~= original deadly amount
         expect(target.isAlive()).toBeFalsy()
     })
 
@@ -85,6 +85,48 @@ describe("Characters", () =>{
             other.dealDamage(testSubject, DEADLY_DAMAGE);
 
             expect(testSubject.isAlive()).toBeFalsy()
+        });
+    });
+
+    describe('Types of character', () => {
+        describe("A melee fighter", () => {
+            it.each([[0, 2], [0, 0], [2, 0]])('should only do damage if the character is in range (positions: %d -> %d)', (characterPosition, targetPosition, ) => {
+                const testSubject = new Character(Attack.Melee, characterPosition, 1);
+                const target = new Character(Attack.Melee, targetPosition, 1);
+
+                testSubject.dealDamage(target, DEADLY_DAMAGE);
+
+                expect(target.isAlive()).toBeFalsy();
+            });
+
+            it('should not do damage if the target is out of range (range: > 2)', () => {
+                const testSubject = new Character(Attack.Melee, 0, 1);
+                const target = new Character(Attack.Melee, 3, 1);
+
+                testSubject.dealDamage(target, DEADLY_DAMAGE);
+
+                expect(target.isAlive()).toBeTruthy();
+            });
+        });
+
+        describe("A ranged fighter", () => {
+            it.each([0, 20])('should only do damage if the character is in range (range: %d)', (startPosition) => {
+                const testSubject = new Character(Attack.Ranged, 0, 1);
+                const target = new Character(Attack.Melee, startPosition, 1);
+
+                testSubject.dealDamage(target, DEADLY_DAMAGE);
+
+                expect(target.isAlive()).toBeFalsy();
+            });
+
+            it('should not do damage if the target is out of range (range: > 20)', () => {
+                const testSubject = new Character(Attack.Ranged, 0, 1);
+                const target = new Character(Attack.Melee, 21, 1);
+
+                testSubject.dealDamage(target, DEADLY_DAMAGE);
+
+                expect(target.isAlive()).toBeTruthy();
+            });
         });
     });
 })
