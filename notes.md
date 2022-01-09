@@ -214,3 +214,15 @@ When writing these notes, I did refactor the 'receive' methods to be private. I'
 
 # Iteration 5 - Props
 ## Start by refactoring?
+
+I've felt since iteration 3 that it can't all be the Character's responsibility - and it's nice to have a requirement to nudge us away from that.
+
+I think there's an interface we should extract first - `Targetable`. `Targetable` things have a position and health, and can receive damage.
+
+What effects might this have on our code?
+
+- A character being dead and or a prop being destroyed can be the same thing (at least in this universe)
+- A character's `dealDamage` method doesn't change depending on the target, if it takes a `Targetable` instead
+- Most things stay the same.
+
+Let's give it a go!
