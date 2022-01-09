@@ -52,6 +52,36 @@ describe("Characters", () => {
         expect(target.isAlive()).toBeFalsy()
     })
 
+    describe("in factions", () => {
+        it('should not hurt an ally', () => {
+            const attacker = new Character();
+            attacker.joinFaction("faction1");
+            const theAlly = new Character();
+            theAlly.joinFaction("faction1");
+
+            attacker.dealDamage(theAlly, DEADLY_DAMAGE);
+
+            expect(theAlly.isAlive()).toBeTruthy()
+        });
+
+        it('can heal an ally', () => {
+            const healer = new Character();
+            healer.joinFaction("faction1");
+            const theAlly = new Character();
+            theAlly.joinFaction("faction1");
+
+            const other = new Character();
+
+            other.dealDamage(theAlly, Character.MAX_HEALTH);
+            healer.heal(1, theAlly);
+            other.dealDamage(theAlly, 1);
+
+            // Normally MAX_HEALTH+1 damage kills characters as per another test...
+            // but we've recovered 1 health so they're still alive.
+            expect(theAlly.isAlive()).toBeTruthy();
+        });
+    })
+
     describe('Healing', () => {
         it('should recover health if healed', () => {
             const other = new Character();
