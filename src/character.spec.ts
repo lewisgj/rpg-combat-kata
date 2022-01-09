@@ -10,62 +10,62 @@ describe("Characters", () =>{
     });
 
     it('should die if damage exceeds current health', () => {
-        const character1 = new Character();
-        const character2 = new Character();
+        const other = new Character();
+        const testSubject = new Character();
 
-        character1.dealDamage(character2, DEADLY_DAMAGE);
-        expect(character2.isAlive()).toBeFalsy();
+        other.dealDamage(testSubject, DEADLY_DAMAGE);
+        expect(testSubject.isAlive()).toBeFalsy();
     });
 
     it.each([NON_LETHAL_DAMAGE, Character.MAX_HEALTH])('should remain alive if receiving damage less than current health: %d', (damage) => {
-        const character1 = new Character();
-        const character2 = new Character();
+        const other = new Character();
+        const testSubject = new Character();
 
-        character1.dealDamage(character2, damage);
-        expect(character2.isAlive()).toBeTruthy();
+        other.dealDamage(testSubject, damage);
+        expect(testSubject.isAlive()).toBeTruthy();
     });
 
     it('should not damage self', () => {
-        const character1 = new Character();
+        const testSubject = new Character();
 
-        character1.dealDamage(character1, DEADLY_DAMAGE);
+        testSubject.dealDamage(testSubject, DEADLY_DAMAGE);
 
-        expect(character1.isAlive()).toBeTruthy();
+        expect(testSubject.isAlive()).toBeTruthy();
     });
 
     describe('Healing', () => {
         it('should recover health if healed', () => {
-            const character1 = new Character();
-            const character2 = new Character();
+            const other = new Character();
+            const testSubject = new Character();
 
-            character1.dealDamage(character2, Character.MAX_HEALTH);
-            character2.heal(1);
-            character1.dealDamage(character2, 1);
+            other.dealDamage(testSubject, Character.MAX_HEALTH);
+            testSubject.heal(1);
+            other.dealDamage(testSubject, 1);
 
             // Normally MAX_HEALTH+1 damage kills characters as per another test...
             // but we've recovered 1 health so they're still alive.
-            expect(character2.isAlive()).toBeTruthy();
+            expect(testSubject.isAlive()).toBeTruthy();
         });
 
         // This isn't strictly what the kata says, but health is an implementation detail
         it('should remain dead', () => {
-            const character1 = new Character();
-            const character2 = new Character();
+            const other = new Character();
+            const testSubject = new Character();
 
-            character1.dealDamage(character2, DEADLY_DAMAGE);
-            character2.heal(NON_LETHAL_DAMAGE);
+            other.dealDamage(testSubject, DEADLY_DAMAGE);
+            testSubject.heal(NON_LETHAL_DAMAGE);
 
-            expect(character2.isAlive()).toBeFalsy()
+            expect(testSubject.isAlive()).toBeFalsy()
         })
 
         it('should not heal beyond max health', () => {
-            const character1 = new Character();
-            const character2 = new Character();
+            const other = new Character();
+            const testSubject = new Character();
 
-            character2.heal(NON_LETHAL_DAMAGE);
-            character1.dealDamage(character2, DEADLY_DAMAGE);
+            testSubject.heal(NON_LETHAL_DAMAGE);
+            other.dealDamage(testSubject, DEADLY_DAMAGE);
 
-            expect(character2.isAlive()).toBeFalsy()
+            expect(testSubject.isAlive()).toBeFalsy()
         });
     });
 })
