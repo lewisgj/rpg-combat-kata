@@ -48,5 +48,15 @@ describe("Characters", () =>{
 
             expect(character2.isAlive()).toBeFalsy()
         })
+
+        it('should not heal beyond max health', () => {
+            const character1 = new Character();
+            const character2 = new Character();
+
+            character1.heal(character2, 100);
+            character1.dealDamage(character2, DEADLY_DAMAGE);
+
+            expect(character2.isAlive()).toBeFalsy()
+        });
     });
 })

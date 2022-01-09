@@ -21,5 +21,9 @@ export class Character {
 
     heal(other: Character, amount: number) {
         other.#health += amount;
+
+        if (other.#health > Character.MAX_HEALTH) {
+            other.#health = 1000;
+        }
     }
 }
