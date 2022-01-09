@@ -180,5 +180,22 @@ class Character {
 }
 ```
 
-I like this a lot! Thanks to Typescript and the `Record` type, we can trust that `MAX_RANGES` will contain a value for every `Attack`. If we add a new type in the future, it'll be a compile-time error if we also forget to add a range here. 
+I like this a lot! Thanks to Typescript and the `Record` type, we can trust that `MAX_RANGES` will contain a value for every `Attack`. If we add a new type in the future, it'll be a compile-time error if we also forget to add a range here.
+
+This 'guard' style of `if this is true, then abort` tends to scale well too in my experience as all the possible rules are layed out linearly and in precedence order. It's also straight-forward to refactor more complex rule definitions into a single function call.  
+
+I've left the test duplication as-is. I'm generally not a fan of large `it.each` blocks: it can be difficult to work out what the intention behind each test case is and it's often clearer and simpler to just write out what it is you're trying to test. 
+
+# The scheduled retrospective
+I've been quite retrospective in these notes already but to answer the questions head on:
+
+* I feel the design is keeping up with requirements okay. Iteration 3 was the biggest challenge for reasons I've written above.
+* I don't feel great about my design - it's largely in one growing class. At some point, I will need to break this up but the seams aren't apparent to me yet.
+* Everything is tested as I've defined it. The real question is does my 100% code coverage really qualify as 100% test coverage!
+
+# Iteration 4: Factions and Allies
+
+## Testing
+
+We're back to the 'health-as-implementation-detail' point, but this time with factions. The first new behaviour we want to observe is that allies can't hurt each other.
 
