@@ -1,6 +1,7 @@
 import {Character} from "./character";
 
 const DEADLY_DAMAGE = Character.MAX_HEALTH+1;
+const NON_LETHAL_DAMAGE = 500;
 describe("Characters", () =>{
     it('should start alive', () => {
         const character = new Character();
@@ -16,12 +17,20 @@ describe("Characters", () =>{
         expect(character2.isAlive()).toBeFalsy();
     });
 
-    it.each([500, Character.MAX_HEALTH])('should remain alive if receiving damage less than current health: %d', (damage) => {
+    it.each([NON_LETHAL_DAMAGE, Character.MAX_HEALTH])('should remain alive if receiving damage less than current health: %d', (damage) => {
         const character1 = new Character();
         const character2 = new Character();
 
         character1.dealDamage(character2, damage);
         expect(character2.isAlive()).toBeTruthy();
+    });
+
+    it('should not damage self', () => {
+        const character1 = new Character();
+
+        character1.dealDamage(character1, DEADLY_DAMAGE);
+
+        expect(character1.isAlive()).toBeTruthy();
     });
 
     describe('Healing', () => {
@@ -44,7 +53,7 @@ describe("Characters", () =>{
             const character2 = new Character();
 
             character1.dealDamage(character2, DEADLY_DAMAGE);
-            character1.heal(character2, 100);
+            character1.heal(character2, NON_LETHAL_DAMAGE);
 
             expect(character2.isAlive()).toBeFalsy()
         })
@@ -53,7 +62,7 @@ describe("Characters", () =>{
             const character1 = new Character();
             const character2 = new Character();
 
-            character1.heal(character2, 100);
+            character1.heal(character2, NON_LETHAL_DAMAGE);
             character1.dealDamage(character2, DEADLY_DAMAGE);
 
             expect(character2.isAlive()).toBeFalsy()

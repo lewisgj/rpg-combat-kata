@@ -8,7 +8,11 @@ export class Character {
     }
 
     dealDamage(other: Character, damage: number) {
-       other.receiveDamage(damage);
+        if (other === this) {
+            return;
+        }
+
+        other.receiveDamage(damage);
     }
 
     receiveDamage(damage: number) {
@@ -28,6 +32,6 @@ export class Character {
     }
 
     heal(other: Character, amount: number) {
-       other.receiveHealth(amount);
+        other.receiveHealth(amount);
     }
 }
