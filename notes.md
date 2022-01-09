@@ -226,3 +226,9 @@ What effects might this have on our code?
 - Most things stay the same.
 
 Let's give it a go!
+
+## Nope!
+That refactoring got hairy quickly - It got as far as the attacker asking the prop for its position to know if it should receive damage and I that didn't sit right at all.
+
+Let's do it properly, starting with a prop taking damage test and let the design emerge.
+
