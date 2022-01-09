@@ -16,11 +16,11 @@ const MAX_RANGES: Record<Attack, number> = {
 
 export class Character {
     static readonly MAX_HEALTH = 1000;
-    #health = Character.MAX_HEALTH;
-    #isAlive = true;
     readonly #level: number;
     readonly #position: number = 0;
     readonly #attack: Attack;
+    #health = Character.MAX_HEALTH;
+    #isAlive = true;
     #factions: Set<string> = new Set<string>();
 
     constructor(attack: Attack = Attack.Melee, position: number = 0, level: number = 1) {
@@ -34,29 +34,29 @@ export class Character {
     }
 
     isAlly(other: Character): boolean {
-        const factionsInCommon = new Set([...this.#factions].filter(x => other.#factions.has(x)));
-        return factionsInCommon.size > 0;
+        const factionsInCommon = [...this.#factions].filter(x => other.#factions.has(x));
+        return factionsInCommon.length > 0;
     }
 
-    dealDamage(other: Character, damage: number) {
-        if (other === this) {
+    dealDamage(target: Character, damage: number) {
+        if (target === this) {
             return;
         }
 
-        if (this.isAlly(other)) {
+        if (this.isAlly(target)) {
             return;
         }
 
-        const distance = Math.abs(this.#position - other.#position);
+        const distance = Math.abs(this.#position - target.#position);
         if (distance > MAX_RANGES[this.#attack]) {
             return;
         }
 
-        const damageModifier = calculateDamageModifier(this.#level, other.#level);
-        other.receiveDamage(damage * damageModifier);
+        const damageModifier = calculateDamageModifier(this.#level, target.#level);
+        target.#receiveDamage(damage * damageModifier);
     }
 
-    receiveDamage(damage: number) {
+    #receiveDamage(damage: number) {
         this.#health -= damage;
         if (this.#health < 0) {
             this.#health = 0;
@@ -66,14 +66,14 @@ export class Character {
 
     heal(amount: number, target?: Character) {
         if (target && this.isAlly(target)) {
-            target.receiveHealth(amount);
+            target.#receiveHealth(amount);
             return;
         }
 
-        this.receiveHealth(amount)
+        this.#receiveHealth(amount)
     }
 
-    receiveHealth(amount: number) {
+    #receiveHealth(amount: number) {
         this.#health += amount;
 
         if (this.#health > Character.MAX_HEALTH) {

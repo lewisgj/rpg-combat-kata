@@ -194,8 +194,23 @@ I've been quite retrospective in these notes already but to answer the questions
 * Everything is tested as I've defined it. The real question is does my 100% code coverage really qualify as 100% test coverage!
 
 # Iteration 4: Factions and Allies
-
 ## Testing
 
-We're back to the 'health-as-implementation-detail' point, but this time with factions. The first new behaviour we want to observe is that allies can't hurt each other.
+We're back to the 'health-as-implementation-detail' point, but this time with factions. I focused first on 'allies can't hurt each other' - which is motivation to create most of the code!
+Something nice happened with these tests - the 'language' I'd built up and implemented so far made them relatively easy to write. Partly because the requirements are purely additions, I could extend the existing test suite and not need to worry about the others.
 
+## Implementation
+
+The requirement "Newly created characters belong to no faction" felt a bit like programming-by-remote-control - I'll decide that, thank you!
+I chose a set of strings to represent factions as there can be more than one - though was disappointed to see that there's no intersection function built-in to decide if two groups of factions overlap.
+
+I'm not happy with the overall design - healing now resembles damaging again with healing and receiving health as distinct methods, but with a different signature.
+Factions
+
+## Refactoring
+
+I broke the rules here a bit. The main test I wrote didn't pass the first time, and to help me debug I simplified my code as I went along. By the time I had fixed the bug, it was already much easier to understand.
+When writing these notes, I did refactor the 'receive' methods to be private. I'm not sure private access is enough to fix the whole design, but it's better than it being public.
+
+# Iteration 5 - Props
+## Start by refactoring?
