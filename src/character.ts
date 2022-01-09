@@ -84,6 +84,10 @@ export class Character {
     joinFaction(faction: string) {
         this.#factions.add(faction);
     }
+
+    leaveFaction(faction: string) {
+        this.#factions.delete(faction);
+    }
 }
 
 export enum Attack {

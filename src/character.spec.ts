@@ -80,6 +80,19 @@ describe("Characters", () => {
             // but we've recovered 1 health so they're still alive.
             expect(theAlly.isAlive()).toBeTruthy();
         });
+
+        it('can leave those factions', () => {
+            const attacker = new Character();
+            attacker.joinFaction("faction1");
+
+            const formerAlly = new Character();
+            formerAlly.joinFaction("faction1");
+
+            attacker.leaveFaction("faction1");
+            attacker.dealDamage(formerAlly, DEADLY_DAMAGE);
+
+            expect(formerAlly.isAlive()).toBeFalsy();
+        })
     })
 
     describe('Healing', () => {
