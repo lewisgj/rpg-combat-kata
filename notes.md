@@ -106,3 +106,79 @@ This looks familiar! I duplicated the tests from melee fighters, rather than exp
 
 ## Implementation
 I went for a really naive approach here to make the test pass - just another if statement, duplicating the code. I'll leave the heavy lifting to the refactor step. 
+
+## Refactoring
+
+Well, this looks horrible!
+```ts
+if (this.#attack === Attack.Melee) {
+    const distance = Math.abs(this.#position - other.#position);
+    if (distance > 2) {
+        return;
+    }
+}
+else if (this.#attack === Attack.Ranged) {
+    const distance = Math.abs(this.#position - other.#position);
+    if (distance > 20) {
+        return;
+    }
+}
+```
+
+Let's move the distance calculation up:
+
+```ts
+const distance = Math.abs(this.#position - other.#position);
+if (this.#attack === Attack.Melee) {
+    if (distance > 2) {
+        return;
+    }
+}
+else if (this.#attack === Attack.Ranged) {
+    if (distance > 20) {
+        return;
+    }
+}
+```
+
+Next, let's remove the nesting:
+
+```ts
+const distance = Math.abs(this.#position - other.#position);
+if (this.#attack === Attack.Melee && distance > 2) {
+    return;
+}
+else if (this.#attack === Attack.Ranged && distance > 20) {
+    return;
+}
+```
+
+That's better, but I think there's an even better option:
+
+```ts
+const MAX_RANGES: Record<Attack, number> = {
+    'MELEE': 2,
+    'RANGED': 20
+}
+
+class Character {
+    // ...
+    dealDamage(other: Character, damage: number) {
+        if (other === this) {
+            return;
+        }
+
+        const distance = Math.abs(this.#position - other.#position);
+        if (distance > MAX_RANGES[this.#attack]) {
+            return;
+        }
+
+        const damageModifier = calculateDamageModifier(this.#level, other.#level);
+        other.receiveDamage(damage * damageModifier);
+    }
+    // ...
+}
+```
+
+I like this a lot! Thanks to Typescript and the `Record` type, we can trust that `MAX_RANGES` will contain a value for every `Attack`. If we add a new type in the future, it'll be a compile-time error if we also forget to add a range here. 
+

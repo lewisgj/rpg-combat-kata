@@ -9,6 +9,11 @@ function calculateDamageModifier(attackerLevel: number, targetLevel: number): nu
     return 1;
 }
 
+const MAX_RANGES: Record<Attack, number> = {
+    'MELEE': 2,
+    'RANGED': 20
+}
+
 export class Character {
     static readonly MAX_HEALTH = 1000;
     #health = Character.MAX_HEALTH;
@@ -32,18 +37,11 @@ export class Character {
             return;
         }
 
-        if (this.#attack === Attack.Melee) {
-            const distance = Math.abs(this.#position - other.#position);
-            if (distance > 2) {
-                return;
-            }
+        const distance = Math.abs(this.#position - other.#position);
+        if (distance > MAX_RANGES[this.#attack]) {
+            return;
         }
-        else if (this.#attack === Attack.Ranged) {
-            const distance = Math.abs(this.#position - other.#position);
-            if (distance > 20) {
-                return;
-            }
-        }
+
         const damageModifier = calculateDamageModifier(this.#level, other.#level);
         other.receiveDamage(damage * damageModifier);
     }
