@@ -18,4 +18,8 @@ export class Character {
             this.#isAlive = false;
         }
     }
+
+    heal(other: Character, amount: number) {
+        other.#health += amount;
+    }
 }
