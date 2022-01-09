@@ -62,4 +62,9 @@ We finally had a use for level, but no mechanism to level up. I assumed that lev
 
 ### Implementation
 
-To avoid having to refactor everything, I made the assumption that levels were 1 if not specified otherwise.
+To avoid having to refactor everything, I made the assumption that levels were 1 if not specified otherwise. I decided to use a multiplier for damage, mirroring the original requirements of percentages.
+
+### Refactoring
+
+The only obvious refactor here was to extract the damage multiplier calculation into its own function. If it got more complicated than that, we might want to unit test it.
+Assuming the requirements stopped here I'd be okay with this solution but dealing damage is taking on a life of its own. I've tried hard so far to avoid violating the tell-don't-ask principle. My gut isn't happy with where the amount of damage is calculated, but I need details of both characters to calculate it. 
