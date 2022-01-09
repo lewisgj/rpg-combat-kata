@@ -39,12 +39,8 @@ export class Character {
         return this.#isAlive;
     }
 
-    isAlly(other: Character): boolean {
-        const factionsInCommon = [...this.#factions].filter(x => other.#factions.has(x));
-        return factionsInCommon.length > 0;
-    }
-
     dealDamage(target: Character | Prop, damage: number) {
+        // These checks are always valid - should *this* character deal damage at all?
         if (target === this) {
             return;
         }
@@ -54,20 +50,30 @@ export class Character {
             return;
         }
 
+        // These checks are about the target
+        // First if it's a prop do something simpler
         if (target instanceof Prop) {
             target.receiveDamage(damage);
             return;
         }
 
-        if (this.isAlly(target)) {
+        // Secondly if it's an ally we want to abort
+        if (this.#isAlly(target)) {
             return;
         }
 
+        // Finally, how much damage do we want to do based on both this and target
         const damageModifier = calculateDamageModifier(this.#level, target.#level);
-        target.#receiveDamage(damage * damageModifier);
+        target.receiveDamage(damage * damageModifier);
     }
 
-    #receiveDamage(damage: number) {
+    #isAlly(other: Character): boolean {
+        const factionsInCommon = [...this.#factions].filter(x => other.#factions.has(x));
+        return factionsInCommon.length > 0;
+    }
+
+
+    receiveDamage(damage: number) {
         this.#health -= damage;
         if (this.#health < 0) {
             this.#health = 0;
@@ -76,7 +82,7 @@ export class Character {
     }
 
     heal(amount: number, target?: Character) {
-        if (target && this.isAlly(target)) {
+        if (target && this.#isAlly(target)) {
             target.#receiveHealth(amount);
             return;
         }
