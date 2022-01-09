@@ -34,3 +34,16 @@ However, I did again repeat the refactoring I did for damage where healing and r
 
 # Iteration 2: Self and levelling
 ## Step 1: Dealing with self
+### Refactoring
+In a change to the usual order, I started with refactoring first this time - before I wrote the tests I realised there were a few too many magic numbers hiding the intent of my tests.
+
+## A misstep: a happy aaccident.
+While damage was easy enough, I introduced a bug for healing by implementing it in an identical way to damage. TDD only really works if you write the right tests.
+
+### Remediating the bug
+
+When I attempted to change the tests, I realised that the bug could be made impossible by changing the code. Sure, the existing tests needed to change but that's a small price to pay.
+How? Well, by changing the method signature from `heal(other, amount)` to just `heal(amount)`, the existing tests wouldn't compile anymore. 
+
+I abandoned a traditional red/green/refactor here - but the thought process still had great value. I thought: "What's the interface I actually want to use?".
+`receiveHealth` became `heal` and the old `heal` was removed entirely.

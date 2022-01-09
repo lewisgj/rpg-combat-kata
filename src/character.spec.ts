@@ -39,7 +39,7 @@ describe("Characters", () =>{
             const character2 = new Character();
 
             character1.dealDamage(character2, Character.MAX_HEALTH);
-            character1.heal(character2, 1);
+            character2.heal(1);
             character1.dealDamage(character2, 1);
 
             // Normally MAX_HEALTH+1 damage kills characters as per another test...
@@ -53,27 +53,16 @@ describe("Characters", () =>{
             const character2 = new Character();
 
             character1.dealDamage(character2, DEADLY_DAMAGE);
-            character1.heal(character2, NON_LETHAL_DAMAGE);
+            character2.heal(NON_LETHAL_DAMAGE);
 
             expect(character2.isAlive()).toBeFalsy()
         })
-
-        it('should not heal self', () => {
-            const other = new Character();
-            const testSubject = new Character();
-
-            other.dealDamage(testSubject, Character.MAX_HEALTH);
-            testSubject.heal(testSubject, 1);
-            other.dealDamage(testSubject, 1);
-
-            expect(testSubject.isAlive()).toBeFalsy()
-        });
 
         it('should not heal beyond max health', () => {
             const character1 = new Character();
             const character2 = new Character();
 
-            character1.heal(character2, NON_LETHAL_DAMAGE);
+            character2.heal(NON_LETHAL_DAMAGE);
             character1.dealDamage(character2, DEADLY_DAMAGE);
 
             expect(character2.isAlive()).toBeFalsy()

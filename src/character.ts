@@ -23,19 +23,11 @@ export class Character {
         }
     }
 
-    receiveHealth(amount: number) {
+    heal(amount: number) {
         this.#health += amount;
 
         if (this.#health > Character.MAX_HEALTH) {
             this.#health = Character.MAX_HEALTH;
         }
-    }
-
-    heal(other: Character, amount: number) {
-        if (other === this) {
-            return;
-        }
-
-        other.receiveHealth(amount);
     }
 }
