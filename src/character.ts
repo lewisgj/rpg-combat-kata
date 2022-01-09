@@ -32,6 +32,10 @@ export class Character {
     }
 
     heal(other: Character, amount: number) {
+        if (other === this) {
+            return;
+        }
+
         other.receiveHealth(amount);
     }
 }

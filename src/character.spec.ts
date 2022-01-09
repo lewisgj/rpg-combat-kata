@@ -58,6 +58,17 @@ describe("Characters", () =>{
             expect(character2.isAlive()).toBeFalsy()
         })
 
+        it('should not heal self', () => {
+            const other = new Character();
+            const testSubject = new Character();
+
+            other.dealDamage(testSubject, Character.MAX_HEALTH);
+            testSubject.heal(testSubject, 1);
+            other.dealDamage(testSubject, 1);
+
+            expect(testSubject.isAlive()).toBeFalsy()
+        });
+
         it('should not heal beyond max health', () => {
             const character1 = new Character();
             const character2 = new Character();
