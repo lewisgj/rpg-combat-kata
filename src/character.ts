@@ -19,11 +19,15 @@ export class Character {
         }
     }
 
-    heal(other: Character, amount: number) {
-        other.#health += amount;
+    receiveHealth(amount: number) {
+        this.#health += amount;
 
-        if (other.#health > Character.MAX_HEALTH) {
-            other.#health = 1000;
+        if (this.#health > Character.MAX_HEALTH) {
+            this.#health = Character.MAX_HEALTH;
         }
+    }
+
+    heal(other: Character, amount: number) {
+       other.receiveHealth(amount);
     }
 }
