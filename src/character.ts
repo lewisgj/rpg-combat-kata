@@ -1,22 +1,11 @@
-import {Prop} from "./prop";
-
-function calculateDamageModifier(attackerLevel: number, targetLevel: number): number {
-    const levelAdvantage = attackerLevel - targetLevel;
-    if (levelAdvantage <= -5) {
-        return 0.5;
-    } else if (levelAdvantage >= 5) {
-        return 1.5;
-    }
-
-    return 1;
-}
+import {DamageModifiers, Targetable} from "./targetable";
 
 const MAX_RANGES: Record<Attack, number> = {
     'MELEE': 2,
     'RANGED': 20
 }
 
-export class Character {
+export class Character implements Targetable {
     static readonly MAX_HEALTH = 1000;
     readonly #level: number;
     readonly #position: number = 0;
@@ -39,8 +28,7 @@ export class Character {
         return this.#isAlive;
     }
 
-    dealDamage(target: Character | Prop, damage: number) {
-        // These checks are always valid - should *this* character deal damage at all?
+    dealDamage(target: Targetable, damage: number) {
         if (target === this) {
             return;
         }
@@ -50,35 +38,37 @@ export class Character {
             return;
         }
 
-        // These checks are about the target
-        // First if it's a prop do something simpler
-        if (target instanceof Prop) {
-            target.receiveDamage(damage);
-            return;
-        }
-
-        // Secondly if it's an ally we want to abort
         if (this.#isAlly(target)) {
             return;
         }
 
-        // Finally, how much damage do we want to do based on both this and target
-        const damageModifier = calculateDamageModifier(this.#level, target.#level);
-        target.receiveDamage(damage * damageModifier);
+        target.receiveDamage(damage, {attackerLevel: this.#level});
     }
 
-    #isAlly(other: Character): boolean {
-        const factionsInCommon = [...this.#factions].filter(x => other.#factions.has(x));
+    #isAlly(other: Targetable): boolean {
+        const factionsInCommon = [...this.#factions].filter(x => other.belongsToFaction(x));
         return factionsInCommon.length > 0;
     }
 
+    receiveDamage(baseDamage: number, modifiers: DamageModifiers) {
+        const damage = this.#calculateDamage(baseDamage, modifiers);
 
-    receiveDamage(damage: number) {
         this.#health -= damage;
         if (this.#health < 0) {
             this.#health = 0;
             this.#isAlive = false;
         }
+    }
+
+    #calculateDamage(damage: number, {attackerLevel}: DamageModifiers) {
+        const levelAdvantage = attackerLevel - this.#level;
+        if (levelAdvantage <= -5) {
+            return 0.5 * damage;
+        } else if (levelAdvantage >= 5) {
+            return 1.5 * damage;
+        }
+
+        return damage;
     }
 
     heal(amount: number, target?: Character) {
@@ -104,6 +94,10 @@ export class Character {
 
     leaveFaction(faction: string) {
         this.#factions.delete(faction);
+    }
+
+    belongsToFaction(faction: string) {
+        return this.#factions.has(faction);
     }
 }
 

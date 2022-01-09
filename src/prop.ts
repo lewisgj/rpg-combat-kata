@@ -1,6 +1,8 @@
-export class Prop {
+import {Targetable} from "./targetable";
+
+export class Prop implements Targetable {
+    readonly #position: number;
     #health: number;
-    #position: number;
     #isAlive: boolean = false;
 
     constructor(health: number, position: number) {
@@ -24,4 +26,7 @@ export class Prop {
         }
     }
 
+    belongsToFaction(faction: string) {
+        return false;
+    }
 }

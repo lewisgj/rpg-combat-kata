@@ -1,6 +1,6 @@
-# Notes
+# RPG Combat Kata
 
-This file is for retrospective notes I made while performing different iterations and steps during the kata.
+See [Original README.md](./Original%20README.md) for the code kata this repository is implementing. You'll probably need to flick between these two files to follow along.  
 
 # Iteration 1:  Characters, Damage and Healing
 ## Step 1: Implementing damage
@@ -88,12 +88,12 @@ Let's assume everything's a melee fighter to start (though we'll make it explici
 
 The simplest test I need to force a meaningful change is an 'out of range' example - though I've also added 'in range' examples to be clear what the range cut-off is.
 
-## Implementation
+### Implementation
 
 So many choices! To make it explicit, characters take an enum for their "attack type". It felt like the simplest thing I could do while still giving it a name. All the constructor parameters have default values so there's just a few breaking changes which is deliberate. Putting the attack type first means can be confident I'm not setting a level as the position in existing code. We might revisit this constructor later as this class grows.
 Again taking the simplest road, I let the attacking character handle the logic (like I did for level modifiers), while the receiving character decides whether it's dead as a result.
 
-## Refactor
+### Refactor
 
 There's nothing obvious yet! I avoided subclassing "MeleeFighter" from "Character": while conceptually it makes sense, I fear that the damage rules are changing a lot so want that defined in a single place.
 
@@ -104,10 +104,10 @@ I was arguably missing some tests for negative distances, so went back and added
 ### Testing
 This looks familiar! I duplicated the tests from melee fighters, rather than expanding on the existing ones to start with. I'm not always a fan of this kind of shortcut but I'd much rather see duplicated or verbose test code provided it's clear what's going on.
 
-## Implementation
+### Implementation
 I went for a really naive approach here to make the test pass - just another if statement, duplicating the code. I'll leave the heavy lifting to the refactor step. 
 
-## Refactoring
+### Refactoring
 
 Well, this looks horrible!
 ```ts
@@ -228,7 +228,36 @@ What effects might this have on our code?
 Let's give it a go!
 
 ## Nope!
-That refactoring got hairy quickly - It got as far as the attacker asking the prop for its position to know if it should receive damage and I that didn't sit right at all.
+That refactoring got hairy quickly - It got as far as the attacker asking the prop for its position to know if it should receive damage and on first glance, that didn't sit right at all.
 
 Let's do it properly, starting with a prop taking damage test and let the design emerge.
 
+## Testing, Initial implementation
+
+The test I started with was "Can a character destroy a prop?". This followed the established pattern of damaging characters until they died. Nothing exciting to share!
+
+## Implementation, Refactoring
+
+Here's where it gets interesting. `Targetable` was a reasonable idea, but what I couldn't see at the time was how to simplify the damage calculation. A working test suite helped me refactor with confidence.
+
+I noticed that the rules fell into two camps:
+
+1. First, decide whether the current character can/should attack
+   1. Are we trying to attack ourselves?
+   2. Are we in attack range?
+   3. Are they an ally?
+2. Second, decide how much damage to do
+   - This is different for props and characters! 
+
+### Deciding whether to attack
+The first group is easier to implement if you assume that Characters and Props have things in common - such as positions. 
+If a position is available on both, then the character can always do a range check.
+
+Factions were stretching the idea, possibly a little too far. If both props and characters have a `belongsToFaction` accessor, we can hardcode the response to always return false for props.
+
+### Deciding how much damage
+"Tell don't ask" was how I approached the second group.
+
+   How can I push the calculation down to the thing being attacked without circular references and other confusing implementation details?
+   
+A new metaphor appeared in "damage modifiers". Instead of deciding how much damage to do, and then telling the target how much damage to receive, the `dealDamage()` function now gives it any relevant information. This did mean that `receiveDamage` became public again - but that was inevitable once `Props` existed. The damage calculation can be kept simple for Props while Characters can take level difference and anything else into account in the future. 
