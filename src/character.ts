@@ -1,5 +1,6 @@
 export class Character {
-    #health = 1000;
+    static readonly MAX_HEALTH = 1000;
+    #health = Character.MAX_HEALTH;
     #isAlive = true;
 
     isAlive(): boolean {

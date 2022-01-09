@@ -11,16 +11,15 @@ describe("Characters", () =>{
         const character1 = new Character();
         const character2 = new Character();
 
-        character1.dealDamage(character2, 1001);
+        character1.dealDamage(character2, Character.MAX_HEALTH+1);
         expect(character2.isAlive()).toBeFalsy();
     });
 
-    it('should remain alive if receiving damage less than curreent health', () => {
+    it.each([500, Character.MAX_HEALTH])('should remain alive if receiving damage less than current health: %d', (damage) => {
         const character1 = new Character();
         const character2 = new Character();
 
-        character1.dealDamage(character2, 500);
+        character1.dealDamage(character2, damage);
         expect(character2.isAlive()).toBeTruthy();
     });
-
 })
